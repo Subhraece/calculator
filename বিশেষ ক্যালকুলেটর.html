@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>বিশেষ ক্যালকুলেটর</title>
+    <style>
+      /* Google Fonts থেকে একটি আধুনিক ফন্ট ইম্পোর্ট করা হয়েছে */
+      @import url("https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap");
+
+      /* মূল পেজের স্টাইল */
+      body {
+        font-family: "Hind Siliguri", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+      }
+
+      /* প্রধান কন্টেইনারের স্টাইল */
+      .calculator-container {
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 35px 40px;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 550px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      /* হেডিং স্টাইল */
+      h1 {
+        color: #3f51b5;
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: 700;
+      }
+
+      /* ইনপুট গ্রুপের স্টাইল */
+      .input-group {
+        margin-bottom: 25px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #555;
+        font-size: 1.1em;
+      }
+
+      input[type="number"] {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        font-size: 18px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+        font-family: "Hind Siliguri", sans-serif;
+      }
+
+      input[type="number"]:focus {
+        outline: none;
+        border-color: #764ba2;
+        box-shadow: 0 0 10px rgba(118, 75, 162, 0.25);
+      }
+
+      /* ক্যালকুলেট বাটনের স্টাইল */
+      .calc-button {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #5b69e2 0%, #8657c7 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+      }
+
+      .calc-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+      }
+
+      /* ফলাফল দেখানোর সেকশন */
+      #results {
+        margin-top: 30px;
+      }
+
+      .result-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f9fa;
+        padding: 12px 18px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        border-left: 5px solid #667eea;
+        transition: all 0.3s ease;
+      }
+
+      .result-item:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .result-label {
+        font-weight: 600;
+        font-size: 1.1em;
+        color: #3f51b5;
+      }
+
+      .result-value {
+        font-weight: 500;
+        font-size: 1.1em;
+        color: #333;
+      }
+
+      /* কপি বাটনের স্টাইল */
+      .copy-btn {
+        background-color: #e8eaf6;
+        color: #3f51b5;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      .copy-btn:hover {
+        background-color: #3f51b5;
+        color: white;
+      }
+
+      .copy-btn.copied {
+        background-color: #4caf50;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator-container">
+      <h1>প্রিমিয়াম ক্যালকুলেটর 🧮</h1>
+
+      <div class="input-group">
+        <label for="inputValue">এখানে আপনার মান ইনপুট করুন:</label>
+        <input
+          type="number"
+          id="inputValue"
+          placeholder="e.g., 50000"
+          oninput="calculate()"
+        />
+      </div>
+
+      <button class="calc-button" onclick="calculate()">ফলাফল দেখুন</button>
+
+      <div id="results"></div>
+    </div>
+
+    <script>
+      // ইনপুট দেওয়ার সাথে সাথে ফলাফল দেখানোর জন্য
+      document
+        .getElementById("inputValue")
+        .addEventListener("input", calculate);
+
+      // মূল গণনা করার ফাংশন
+      function calculate() {
+        const inputElement = document.getElementById("inputValue");
+        // খালি ইনপুটের জন্য 0 ধরা হয়েছে
+        const inputValue = parseFloat(inputElement.value) || 0;
+
+        if (inputValue < 0) {
+          document.getElementById("results").innerHTML =
+            '<p style="text-align:center; color:red;">অনুগ্রহ করে একটি ধনাত্মক সংখ্যা ইনপুট করুন।</p>';
+          return;
+        }
+
+        // আপনার দেওয়া ফর্মুলা অনুযায়ী গণনা (int মানে Integer ভ্যালু)
+        const x1 = Math.floor(inputValue * 0.02 + 1);
+        const x2 = Math.floor(x1 / 0.85 + 1);
+        const x3 = Math.floor((x1 + x2) / 0.85 + 1);
+        const x4 = Math.floor((x1 + x2 + x3) / 0.85 + 1);
+        const x5 = Math.floor((x1 + x2 + x3 + x4) / 0.85 + 1);
+
+        const resultsContainer = document.getElementById("results");
+
+        // ফলাফল দেখানোর জন্য HTML কোড
+        resultsContainer.innerHTML = `
+                ${createResultRow("x1", x1)}
+                ${createResultRow("x2", x2)}
+                ${createResultRow("x3", x3)}
+                ${createResultRow("x4", x4)}
+                ${createResultRow("x5", x5)}
+            `;
+      }
+
+      // ফলাফল দেখানোর জন্য একটি Helper ফাংশন
+      function createResultRow(label, value) {
+        return `
+                <div class="result-item">
+                    <div>
+                        <span class="result-label">${label} = </span>
+                        <span class="result-value">${value}</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard(this, ${value})">কপি</button>
+                </div>
+            `;
+      }
+
+      // ক্লিপবোর্ডে ভ্যালু কপি করার ফাংশন
+      function copyToClipboard(button, textToCopy) {
+        navigator.clipboard
+          .writeText(textToCopy)
+          .then(() => {
+            // সমস্ত বাটনের স্টাইল রিসেট করা
+            document.querySelectorAll(".copy-btn").forEach((btn) => {
+              btn.innerText = "কপি";
+              btn.classList.remove("copied");
+            });
+
+            // ক্লিক করা বাটনের স্টাইল পরিবর্তন করা
+            button.innerText = "কপিড!";
+            button.classList.add("copied");
+
+            // ২ সেকেন্ড পর বাটনটিকে আবার আগের অবস্থায় ফিরিয়ে আনা
+            setTimeout(() => {
+              button.innerText = "কপি";
+              button.classList.remove("copied");
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error("কপি করতে ব্যর্থ: ", err);
+            alert("দুঃখিত, কপি করা সম্ভব হয়নি।");
+          });
+      }
+    </script>
+  </body>
+</html>
