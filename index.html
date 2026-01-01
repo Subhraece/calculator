@@ -1,248 +1,366 @@
 <!DOCTYPE html>
 <html lang="bn">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>বিশেষ ক্যালকুলেটর</title>
-    <style>
-      /* Google Fonts থেকে একটি আধুনিক ফন্ট ইম্পোর্ট করা হয়েছে */
-      @import url("https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap");
 
-      /* মূল পেজের স্টাইল */
-      body {
-        font-family: "Hind Siliguri", sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #333;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
-        padding: 20px;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ক্যালকুলেটর</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600&display=swap");
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: "Hind Siliguri", -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #000;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      color: #fff;
+    }
+
+    .header {
+      padding: clamp(10px, 2vh, 20px) clamp(12px, 3vw, 30px);
+      flex-shrink: 0;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: clamp(1.1em, 3.5vw, 2em);
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 1.5vh, 14px);
+      padding: 0 clamp(12px, 3vw, 30px);
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .input-row {
+      display: flex;
+      gap: clamp(8px, 2vw, 14px);
+      flex-shrink: 0;
+    }
+
+    .input-bubble {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: clamp(12px, 2.5vw, 20px);
+      padding: clamp(10px, 2vh, 18px) clamp(12px, 2.5vw, 22px);
+    }
+
+    .input-label {
+      font-size: clamp(0.6em, 1.6vw, 0.85em);
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: clamp(3px, 0.8vh, 8px);
+    }
+
+    input,
+    select {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: clamp(1em, 2.8vw, 1.6em);
+      font-family: inherit;
+      font-weight: 500;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0 center;
+      background-size: clamp(12px, 2vw, 18px);
+    }
+
+    select option {
+      background: #1c1c1e;
+    }
+
+    #results {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(6px, 1.2vh, 12px);
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* Action Row - 3 items side by side */
+    .action-row {
+      display: flex;
+      gap: clamp(6px, 1.2vw, 12px);
+      flex-shrink: 0;
+    }
+
+    .action-bubble {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: clamp(12px, 2.5vw, 20px);
+      padding: clamp(8px, 1.5vh, 14px) clamp(8px, 1.5vw, 14px);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .action-bubble.highlight {
+      background: rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+    }
+
+    .action-bubble.highlight:active {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .action-bubble.highlight.copied {
+      background: rgba(52, 199, 89, 0.2);
+    }
+
+    .action-label {
+      font-size: clamp(0.5em, 1.3vw, 0.75em);
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 2px;
+    }
+
+    .action-value {
+      font-size: clamp(1em, 2.8vw, 1.6em);
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .action-bubble.highlight .action-value {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .win-btn {
+      flex: 1;
+      background: rgba(52, 199, 89, 0.15);
+      border: none;
+      color: rgba(52, 199, 89, 0.9);
+      border-radius: clamp(12px, 2.5vw, 20px);
+      cursor: pointer;
+      font-size: clamp(0.7em, 1.8vw, 1em);
+      font-weight: 500;
+      font-family: inherit;
+      padding: clamp(8px, 1.5vh, 14px);
+    }
+
+    .win-btn:active {
+      background: rgba(52, 199, 89, 0.25);
+    }
+
+    .trade-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(5px, 1vw, 10px);
+      flex: 1;
+      min-height: 0;
+    }
+
+    @media (min-width: 500px) {
+      .trade-grid {
+        grid-template-columns: repeat(6, 1fr);
       }
+    }
 
-      /* প্রধান কন্টেইনারের স্টাইল */
-      .calculator-container {
-        background-color: rgba(255, 255, 255, 0.95);
-        padding: 35px 40px;
-        border-radius: 15px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        width: 100%;
-        max-width: 550px;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      }
+    .trade-bubble {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: clamp(10px, 2vw, 16px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      padding: clamp(6px, 1.2vh, 12px);
+    }
 
-      /* হেডিং স্টাইল */
-      h1 {
-        color: #3f51b5;
-        text-align: center;
-        margin-bottom: 30px;
-        font-weight: 700;
-      }
+    .trade-bubble:active {
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-      /* ইনপুট গ্রুপের স্টাইল */
-      .input-group {
-        margin-bottom: 25px;
-      }
+    .trade-bubble.copied {
+      background: rgba(52, 199, 89, 0.2);
+    }
 
-      label {
-        display: block;
-        margin-bottom: 10px;
-        font-weight: 600;
-        color: #555;
-        font-size: 1.1em;
-      }
+    .trade-bubble.balance {
+      background: rgba(255, 149, 0, 0.12);
+    }
 
-      input[type="number"] {
-        width: 100%;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        font-size: 18px;
-        box-sizing: border-box;
-        transition: all 0.3s ease;
-        font-family: "Hind Siliguri", sans-serif;
-      }
+    .trade-bubble.balance .trade-label {
+      color: rgba(255, 149, 0, 0.7);
+    }
 
-      input[type="number"]:focus {
-        outline: none;
-        border-color: #764ba2;
-        box-shadow: 0 0 10px rgba(118, 75, 162, 0.25);
-      }
+    .trade-bubble.balance .trade-value {
+      color: rgba(255, 149, 0, 0.9);
+    }
 
-      /* ক্যালকুলেট বাটনের স্টাইল */
-      .calc-button {
-        width: 100%;
-        padding: 15px;
-        background: linear-gradient(135deg, #5b69e2 0%, #8657c7 100%);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 20px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        letter-spacing: 0.5px;
-      }
+    .trade-label {
+      font-size: clamp(0.5em, 1.4vw, 0.8em);
+      color: rgba(255, 255, 255, 0.35);
+    }
 
-      .calc-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
-      }
+    .trade-value {
+      font-size: clamp(0.9em, 2.6vw, 1.5em);
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.85);
+    }
 
-      /* ফলাফল দেখানোর সেকশন */
-      #results {
-        margin-top: 30px;
-      }
+    .footer {
+      padding: clamp(8px, 1.5vh, 14px) clamp(12px, 3vw, 30px);
+      text-align: center;
+      flex-shrink: 0;
+    }
 
-      .result-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #f8f9fa;
-        padding: 12px 18px;
-        border-radius: 10px;
-        margin-bottom: 12px;
-        border-left: 5px solid #667eea;
-        transition: all 0.3s ease;
-      }
+    .footer-text {
+      font-size: clamp(0.55em, 1.5vw, 0.85em);
+      color: rgba(255, 255, 255, 0.25);
+    }
+  </style>
+</head>
 
-      .result-item:hover {
-        transform: scale(1.02);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-      }
+<body>
+  <div class="header">
+    <h1>ক্যালকুলেটর</h1>
+  </div>
 
-      .result-label {
-        font-weight: 600;
-        font-size: 1.1em;
-        color: #3f51b5;
-      }
-
-      .result-value {
-        font-weight: 500;
-        font-size: 1.1em;
-        color: #333;
-      }
-
-      /* কপি বাটনের স্টাইল */
-      .copy-btn {
-        background-color: #e8eaf6;
-        color: #3f51b5;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: background-color 0.3s ease, color 0.3s ease;
-      }
-
-      .copy-btn:hover {
-        background-color: #3f51b5;
-        color: white;
-      }
-
-      .copy-btn.copied {
-        background-color: #4caf50;
-        color: white;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="calculator-container">
-      <h1>প্রিমিয়াম ক্যালকুলেটর 🧮</h1>
-
-      <div class="input-group">
-        <label for="inputValue">এখানে আপনার মান ইনপুট করুন:</label>
-        <input
-          type="number"
-          id="inputValue"
-          placeholder="e.g., 50000"
-          oninput="calculate()"
-        />
+  <div class="body">
+    <div class="input-row">
+      <div class="input-bubble">
+        <div class="input-label">অ্যামাউন্ট</div>
+        <input type="number" id="inputValue" placeholder="10000" oninput="calculate()" />
       </div>
-
-      <button class="calc-button" onclick="calculate()">ফলাফল দেখুন</button>
-
-      <div id="results"></div>
+      <div class="input-bubble">
+        <div class="input-label">Win Rate</div>
+        <select id="winRate" onchange="calculate()">
+          <option value="0.89" selected>89%</option>
+          <option value="0.85">85%</option>
+          <option value="0.82">82%</option>
+        </select>
+      </div>
     </div>
+    <div id="results"></div>
+  </div>
 
-    <script>
-      // ইনপুট দেওয়ার সাথে সাথে ফলাফল দেখানোর জন্য
-      document
-        .getElementById("inputValue")
-        .addEventListener("input", calculate);
+  <div class="footer">
+    <div class="footer-text">ট্যাপ করে কপি করুন • শুভকামনা! 🍀</div>
+  </div>
 
-      // মূল গণনা করার ফাংশন
-      function calculate() {
-        const inputElement = document.getElementById("inputValue");
-        // খালি ইনপুটের জন্য 0 ধরা হয়েছে
-        const inputValue = parseFloat(inputElement.value) || 0;
+  <script>
+    let currentNewTotal = 0;
 
-        if (inputValue < 0) {
-          document.getElementById("results").innerHTML =
-            '<p style="text-align:center; color:red;">অনুগ্রহ করে একটি ধনাত্মক সংখ্যা ইনপুট করুন।</p>';
-          return;
-        }
+    function calculateTradeList(amount) {
+      const rate = 0.85;
+      const x1 = Math.floor(amount * 0.02 + 1);
+      const x2 = Math.floor(x1 / rate + 1);
+      const x3 = Math.floor((x1 + x2) / rate + 1);
+      const x4 = Math.floor((x1 + x2 + x3) / rate + 1);
+      const x5 = Math.floor((x1 + x2 + x3 + x4) / rate + 1);
+      return [x1, x2, x3, x4, x5];
+    }
 
-        // আপনার দেওয়া ফর্মুলা অনুযায়ী গণনা (int মানে Integer ভ্যালু)
-        const x1 = Math.floor(inputValue * 0.02 + 1);
-        const x2 = Math.floor(x1 / 0.85 + 1);
-        const x3 = Math.floor((x1 + x2) / 0.85 + 1);
-        const x4 = Math.floor((x1 + x2 + x3) / 0.85 + 1);
-        const x5 = Math.floor((x1 + x2 + x3 + x4) / 0.85 + 1);
+    function calculate() {
+      const inputValue = parseFloat(document.getElementById("inputValue").value) || 0;
+      const winRate = parseFloat(document.getElementById("winRate").value);
 
-        const resultsContainer = document.getElementById("results");
-
-        // ফলাফল দেখানোর জন্য HTML কোড
-        resultsContainer.innerHTML = `
-                ${createResultRow("x1", x1)}
-                ${createResultRow("x2", x2)}
-                ${createResultRow("x3", x3)}
-                ${createResultRow("x4", x4)}
-                ${createResultRow("x5", x5)}
-            `;
+      if (inputValue <= 0) {
+        document.getElementById("results").innerHTML = '';
+        return;
       }
 
-      // ফলাফল দেখানোর জন্য একটি Helper ফাংশন
-      function createResultRow(label, value) {
-        return `
-                <div class="result-item">
-                    <div>
-                        <span class="result-label">${label} = </span>
-                        <span class="result-value">${value}</span>
-                    </div>
-                    <button class="copy-btn" onclick="copyToClipboard(this, ${value})">কপি</button>
-                </div>
-            `;
+      const [x1, x2, x3, x4, x5] = calculateTradeList(inputValue);
+      const totalTrades = x1 + x2 + x3 + x4 + x5;
+      const balance = Math.floor(inputValue - totalTrades);
+
+      const totalAfterWin = Math.floor(inputValue + (x1 * winRate));
+      const newX1 = calculateTradeList(totalAfterWin)[0];
+
+      currentNewTotal = totalAfterWin;
+
+      document.getElementById("results").innerHTML = `
+          <div class="action-row">
+            <div class="action-bubble">
+              <div class="action-label">জিতলে টোটাল</div>
+              <div class="action-value">₹${totalAfterWin.toLocaleString('en-IN')}</div>
+            </div>
+            <div class="action-bubble highlight" onclick="copyTrade(this, ${newX1})">
+              <div class="action-label">নতুন x1</div>
+              <div class="action-value">${newX1}</div>
+            </div>
+            <button class="win-btn" onclick="applyWin()">জিতেছেন?<br>ট্যাপ করুন</button>
+          </div>
+
+          <div class="trade-grid">
+            <div class="trade-bubble" onclick="copyTrade(this, ${x1})">
+              <div class="trade-label">x1</div>
+              <div class="trade-value">${x1}</div>
+            </div>
+            <div class="trade-bubble" onclick="copyTrade(this, ${x2})">
+              <div class="trade-label">x2</div>
+              <div class="trade-value">${x2}</div>
+            </div>
+            <div class="trade-bubble" onclick="copyTrade(this, ${x3})">
+              <div class="trade-label">x3</div>
+              <div class="trade-value">${x3}</div>
+            </div>
+            <div class="trade-bubble" onclick="copyTrade(this, ${x4})">
+              <div class="trade-label">x4</div>
+              <div class="trade-value">${x4}</div>
+            </div>
+            <div class="trade-bubble" onclick="copyTrade(this, ${x5})">
+              <div class="trade-label">x5</div>
+              <div class="trade-value">${x5}</div>
+            </div>
+            <div class="trade-bubble balance" onclick="copyTrade(this, ${balance})">
+              <div class="trade-label">ব্যালেন্স</div>
+              <div class="trade-value">${balance}</div>
+            </div>
+          </div>
+        `;
+    }
+
+    function applyWin() {
+      if (currentNewTotal > 0) {
+        document.getElementById("inputValue").value = currentNewTotal;
+        calculate();
       }
+    }
 
-      // ক্লিপবোর্ডে ভ্যালু কপি করার ফাংশন
-      function copyToClipboard(button, textToCopy) {
-        navigator.clipboard
-          .writeText(textToCopy)
-          .then(() => {
-            // সমস্ত বাটনের স্টাইল রিসেট করা
-            document.querySelectorAll(".copy-btn").forEach((btn) => {
-              btn.innerText = "কপি";
-              btn.classList.remove("copied");
-            });
+    function copyTrade(element, value) {
+      navigator.clipboard.writeText(value.toString()).then(() => {
+        element.classList.add("copied");
+        setTimeout(() => element.classList.remove("copied"), 800);
+      });
+    }
+  </script>
+</body>
 
-            // ক্লিক করা বাটনের স্টাইল পরিবর্তন করা
-            button.innerText = "কপিড!";
-            button.classList.add("copied");
-
-            // ২ সেকেন্ড পর বাটনটিকে আবার আগের অবস্থায় ফিরিয়ে আনা
-            setTimeout(() => {
-              button.innerText = "কপি";
-              button.classList.remove("copied");
-            }, 2000);
-          })
-          .catch((err) => {
-            console.error("কপি করতে ব্যর্থ: ", err);
-            alert("দুঃখিত, কপি করা সম্ভব হয়নি।");
-          });
-      }
-    </script>
-  </body>
 </html>
