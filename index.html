@@ -298,7 +298,7 @@
 
       const [x1, x2, x3, x4, x5] = calculateTradeList(inputValue);
       const totalTrades = x1 + x2 + x3 + x4 + x5;
-      const balance = Math.floor(inputValue - totalTrades);
+      const balance = inputValue - totalTrades;
 
       const totalAfterWin = Math.floor(inputValue + (x1 * winRate));
       const newX1 = calculateTradeList(totalAfterWin)[0];
